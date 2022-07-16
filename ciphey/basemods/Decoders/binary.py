@@ -39,7 +39,7 @@ class Binary(Decoder[str]):
                 return None
             ret.append(val)
 
-        if len(ret) != 0:
+        if ret:
             ret = bytes(ret)
             logging.info(f"binary successful, returning {ret.__repr__()}")
             return ret

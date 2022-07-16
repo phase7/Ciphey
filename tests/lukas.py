@@ -75,7 +75,7 @@ class XY_encrypt:
         s = list(self.ctext)
         for i in range(len(s) - 1):
             while random.randrange(2):
-                s[i] = s[i] + " "
+                s[i] = f"{s[i]} "
         return "".join(s)
 
     def to_binary(self):

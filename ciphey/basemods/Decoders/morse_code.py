@@ -65,7 +65,7 @@ class Morse_code(Decoder[str]):
                     return None
                 result = result + m
             # after every word add a space
-            result = result + " "
+            result = f"{result} "
         if len(result) == 0:
             logging.debug("Morse code failed to match")
             return None

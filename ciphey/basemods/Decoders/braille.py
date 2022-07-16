@@ -14,12 +14,10 @@ class Braille(Decoder[str]):
         """
         logging.debug("Attempting Braille")
         ctext_decoded = ""
-        braille_matches = 0
-        for symbol in self.BRAILLE_DICT_INV.values():
-            if symbol in ctext:
-                braille_matches += 1
-            else:
-                continue
+        braille_matches = sum(
+            symbol in ctext for symbol in self.BRAILLE_DICT_INV.values()
+        )
+
         if braille_matches == 0:
             logging.debug("Failed to decode Braille due to invalid characters")
             return None

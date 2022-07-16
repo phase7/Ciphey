@@ -25,8 +25,7 @@ class encipher:
     def read_text(self):  # pragma: no cover
         f = open("hansard.txt", encoding="ISO-8859-1")
         x = f.read()
-        splits = nltk.tokenize.sent_tokenize(x)
-        return splits
+        return nltk.tokenize.sent_tokenize(x)
 
     def getRandomSentence(self, size):  # pragma: no cover
         return TreebankWordDetokenizer().detokenize(
@@ -72,10 +71,7 @@ class encipher_crypto:  # pragma: no cover
 
     # pragma: no cover
     def random_key(self, text) -> str:  # pragma: no cover
-        if len(text) < 8:
-            length = 3
-        else:
-            length = 8
+        length = 3 if len(text) < 8 else 8
         return self.random_string(length)
 
     def random_string(self, length) -> str:  # pragma: no cover
@@ -99,13 +95,10 @@ class encipher_crypto:  # pragma: no cover
             text -> as Base64"""
         return base64.b64encode(bytes(text, "utf-8")).decode("utf-8")
 
-    def Caesar(self, s, k):  # pragma: no cover
+    def Caesar(self, s, k):    # pragma: no cover
         """Iterates through each letter and constructs the cipher text"""
-        new_message = ""
         facr = k % 26
-        for c in s:
-            new_message += self.apply_rotation(c, facr)
-        return new_message
+        return "".join(self.apply_rotation(c, facr) for c in s)
 
     def apply_rotation(self, c, facr):  # pragma: no cover
         """Applies a shift of facr  the letter denoted by c"""
@@ -166,14 +159,8 @@ class encipher_crypto:  # pragma: no cover
         cipheycore.vigenere_encrypt(plaintext, key, self.group)
 
     def vig_key(self, msg, key):
-        tab = dict()
-        for counter, i in enumerate(self.group):
-            tab[self.group[counter]] = counter
-
-        real_key = []
-        for i in key:
-            real_key.append(tab[i])
-        return real_key
+        tab = {self.group[counter]: counter for counter, i in enumerate(self.group)}
+        return [tab[i] for i in key]
         # vigenere_encrypt(msg, real_key, group)
 
     def base58_bitcoin(self, text: str):

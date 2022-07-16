@@ -65,8 +65,9 @@ class XorCrypt(Cracker[bytes]):
         possible_keys = cipheycore.xorcrypt_crack(analysis, self.expected, self.p_value)
 
         logging.debug(
-            f"xorcrypt crack got keys: {[[i for i in candidate.key] for candidate in possible_keys]}"
+            f"xorcrypt crack got keys: {[list(candidate.key) for candidate in possible_keys]}"
         )
+
         return [
             CrackResult(
                 value=cipheycore.xorcrypt_decrypt(ctext, candidate.key),
@@ -102,7 +103,7 @@ class XorCrypt(Cracker[bytes]):
 
         ret = []
         # Fuzz around
-        for i in range(min(len - 2, 2), len + 2):
+        for _ in range(min(len - 2, 2), len + 2):
             ret += self.crackOne(
                 ctext,
                 self.cache.get_or_update(

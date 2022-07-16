@@ -26,13 +26,7 @@ class Multi_tap(Decoder[str]):
         if not Multi_tap.is_all_dup(code):
             return False
 
-        if int(code[0]) not in range(2, 10):
-            return False
-
-        if len(code) > 4:
-            return False
-
-        return True
+        return False if int(code[0]) not in range(2, 10) else len(code) <= 4
 
     @staticmethod
     def decode_num_to_char(number: str) -> str:

@@ -60,17 +60,9 @@ class Brainfuck(Decoder[str]):
             cmd = ctext[codeptr]
 
             if cmd == "+":
-                if memory[memptr] < 255:
-                    memory[memptr] = memory[memptr] + 1
-                else:
-                    memory[memptr] = 0
-
+                memory[memptr] = memory[memptr] + 1 if memory[memptr] < 255 else 0
             elif cmd == "-":
-                if memory[memptr] > 0:
-                    memory[memptr] = memory[memptr] - 1
-                else:
-                    memory[memptr] = 255
-
+                memory[memptr] = memory[memptr] - 1 if memory[memptr] > 0 else 255
             elif cmd == ">":
                 if memptr == len(memory) - 1:
                     memory.append(0)
@@ -82,15 +74,12 @@ class Brainfuck(Decoder[str]):
                 else:
                     memptr -= 1
 
-            # If we're at the beginning of the loop and the memory is 0, exit the loop
             elif cmd == "[" and memory[memptr] == 0:
                 codeptr = bracemap[codeptr]
 
-            # If we're at the end of the loop and the memory is >0, jmp to the beginning of the loop
             elif cmd == "]" and memory[memptr]:
                 codeptr = bracemap[codeptr]
 
-            # Store the output as a string instead of printing it out
             elif cmd == ".":
                 result += chr(memory[memptr])
 
@@ -109,7 +98,7 @@ class Brainfuck(Decoder[str]):
         """
 
         open_stack = []
-        bracemap = dict()
+        bracemap = {}
         legal_instructions = {"+", "-", ">", "<", "[", "]", "."}
         legal_count = 0
 
@@ -142,7 +131,7 @@ class Brainfuck(Decoder[str]):
         # 2. There are no extra open braces
         # 3. There is at least one character to be "printed"
         # (result is >=1 in length)
-        is_brainfuck = legal_count == len(program) and len(open_stack) == 0 and prints
+        is_brainfuck = legal_count == len(program) and not open_stack and prints
 
         return bracemap, is_brainfuck
 

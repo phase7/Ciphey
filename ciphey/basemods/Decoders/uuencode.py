@@ -30,7 +30,7 @@ class Uuencode(Decoder[str]):
                 # If there isn't a "being" prefix and "end" suffix, we use the binascii module instead
                 # It is possible that the ctext has multiple lines, so convert each line and append
                 ctext_split = list(filter(None, ctext.splitlines()))
-                for _, value in enumerate(ctext_split):
+                for value in ctext_split:
                     result += a2b_uu(value).decode("utf-8")
             logging.info(f"UUencode successful, returning '{result}'")
             return result

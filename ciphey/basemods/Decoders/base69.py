@@ -17,12 +17,9 @@ class Base69(Decoder[str]):
         # Remove whitespace
         try:
             ctext = re.sub(r"\s+", "", ctext, flags=re.UNICODE)
-            extra_bytes = 0
             clen = len(ctext)
 
-            if ctext[:-1] == "=":
-                extra_bytes = int(ctext[clen - 2])
-
+            extra_bytes = int(ctext[clen - 2]) if ctext[:-1] == "=" else 0
             CHUNK_COUNT = ceil(clen / 16)
             result = [0 for _ in range(CHUNK_COUNT * 7 - extra_bytes)]
 
@@ -30,7 +27,7 @@ class Base69(Decoder[str]):
                 chunk_string = ctext[i * 16 : (i + 1) * 16]
                 if extra_bytes and (i == CHUNK_COUNT - 1):
                     insert = self.decode_chunk(chunk_string)
-                    for n, elem in enumerate(insert[0 : 7 - extra_bytes]):
+                    for n, elem in enumerate(insert[:7 - extra_bytes]):
                         result[n + i * 7] = elem
                 else:
                     insert = self.decode_chunk(chunk_string)
