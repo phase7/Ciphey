@@ -59,10 +59,9 @@ class mathsHelper:
         For instance by checking if m is prime to perform a different calculation,
         or by using the extended euclidean algorithm.
         """
-        for i in range(1, m):
-            if (m * i + 1) % a == 0:
-                return (m * i + 1) // a
-        return None
+        return next(
+            ((m * i + 1) // a for i in range(1, m) if (m * i + 1) % a == 0), None
+        )
 
     @staticmethod
     def percentage(part: float, whole: float) -> float:
@@ -78,10 +77,7 @@ class mathsHelper:
             Returns the percentage of part to whole.
 
         """
-        if part <= 0 or whole <= 0:
-            return 0
-        # works with percentages
-        return 100 * float(part) / float(whole)
+        return 0 if part <= 0 or whole <= 0 else 100 * part / whole
 
     def sort_prob_table(self, prob_table: dict) -> dict:
         """Sorts the probability table.
@@ -105,10 +101,8 @@ class mathsHelper:
             prob_table[key] = self.new_sort(value)
             prob_table[key] = dict(prob_table[key])
 
-        # gets maximum key then sets it to the front
-        counter_max: int = 0
         counter_prob: int = len(prob_table)
-        while counter_max < counter_prob:
+        for counter_max in range(counter_prob):
             max_overall = 0
             highest_key = None
             logging.debug(
@@ -128,19 +122,15 @@ class mathsHelper:
                     )
                     if maxLocal > max_overall:
                         logging.debug(f"New max local found {maxLocal}")
-                        # because the dict doesn't reset
-                        max_dict_pair = {}
                         max_overall = maxLocal
-                        # so eventually, we get the maximum dict pairing?
-                        max_dict_pair[key] = value
+                        max_dict_pair = {key: value}
                         highest_key = key
                         logging.debug(f"Highest key is {highest_key}")
-                # removes the highest key from the prob table
+                        # removes the highest key from the prob table
             logging.debug(f"Prob table is {prob_table} and highest key is {highest_key}")
             logging.debug(f"Removing {prob_table[highest_key]}")
             del prob_table[highest_key]
             logging.debug(f"Prob table after deletion is {prob_table}")
-            counter_max += 1
             empty_dict = {**empty_dict, **max_dict_pair}
 
         # returns the max dict (at the start) with the prob table
@@ -202,7 +192,4 @@ class mathsHelper:
         Returns:
             Returns string without punctuation.
         """
-        text: str = (str(text).translate(str.maketrans("", "", punctuation))).strip(
-            "\n"
-        )
-        return text
+        return text.translate(str.maketrans("", "", punctuation)).strip("\n")

@@ -261,9 +261,7 @@ class AuSearch(Searcher):
         try:
             self.recursive_expand(root, False)
 
-            while True:
-                if self.work.empty():
-                    break
+            while not self.work.empty():
                 # Get the highest level result
                 chunk = self.work.get_work_chunk()
                 chunk.sort(key=lambda i: i.score)

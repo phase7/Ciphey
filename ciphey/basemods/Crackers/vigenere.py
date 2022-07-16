@@ -57,7 +57,7 @@ class Vigenere(Cracker[str]):
             analysis = self.cache.get_or_update(
                 ctext, f"vigenere::{keysize.len}", lambda: keysize.tab
             )
-        if len(likely_lens) == 0:
+        if not likely_lens:
             return CrackInfo(
                 success_likelihood=0,
                 # TODO: actually calculate runtimes
@@ -89,8 +89,9 @@ class Vigenere(Cracker[str]):
         if len(possible_keys) > self.clamp:
             possible_keys = possible_keys[: self.clamp]
         logging.debug(
-            f"Vigenere crack got keys: {[[i for i in candidate.key] for candidate in possible_keys]}"
+            f"Vigenere crack got keys: {[list(candidate.key) for candidate in possible_keys]}"
         )
+
         return [
             CrackResult(
                 value=fix_case(
@@ -106,11 +107,7 @@ class Vigenere(Cracker[str]):
     def attemptCrack(self, ctext: str) -> List[CrackResult]:
         logging.info("Trying vigenere cipher")
         # Convert it to lower case
-        if self.lower:
-            message = ctext.lower()
-        else:
-            message = ctext
-
+        message = ctext.lower() if self.lower else ctext
         # Analysis must be done here, where we know the case for the cache
         if self.keysize is not None:
             return self.crackOne(
@@ -133,7 +130,7 @@ class Vigenere(Cracker[str]):
                 message, self.expected, self.group
             ),
         )
-        possible_lens = [i for i in likely_lens]
+        possible_lens = list(likely_lens)
         possible_lens.sort(key=lambda i: i.p_value)
         logging.debug(f"Got possible lengths {[i.len for i in likely_lens]}")
         # TODO: work out length

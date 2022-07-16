@@ -72,20 +72,16 @@ class Graph:
         # haven't all been inspected, starts off with the start node
         # closed_list is a list of nodes which have been visited
         # and who's neighbors have been inspected
-        open_list = set([start_node])
+        open_list = {start_node}
         closed_list = set([])
 
         # g contains current distances from start_node to all other nodes
         # the default value (if it's not found in the map) is +infinity
-        g = {}
-
-        g[start_node] = 0
+        g = {start_node: 0}
 
         # parents contains an adjacency map of all nodes
-        parents = {}
-        parents[start_node] = start_node
-
-        while len(open_list) > 0:
+        parents = {start_node: start_node}
+        while open_list:
             print(f"The open list is {open_list}")
             n = None
 
@@ -120,7 +116,7 @@ class Graph:
 
                 reconst_path.reverse()
 
-                print("Path found: {}".format(reconst_path))
+                print(f"Path found: {reconst_path}")
                 return reconst_path
 
             print(n)
@@ -133,17 +129,13 @@ class Graph:
                     parents[m] = n
                     g[m] = g[n] + weight
 
-                # otherwise, check if it's quicker to first visit n, then m
-                # and if it is, update parent data and g data
-                # and if the node was in the closed_list, move it to open_list
-                else:
-                    if g[m] > g[n] + weight:
-                        g[m] = g[n] + weight
-                        parents[m] = n
+                elif g[m] > g[n] + weight:
+                    g[m] = g[n] + weight
+                    parents[m] = n
 
-                        if m in closed_list:
-                            closed_list.remove(m)
-                            open_list.add(m)
+                    if m in closed_list:
+                        closed_list.remove(m)
+                        open_list.add(m)
 
             # remove n from the open_list, and add it to closed_list
             # because all of his neighbors were inspected

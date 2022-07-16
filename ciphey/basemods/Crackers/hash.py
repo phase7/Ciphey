@@ -29,23 +29,20 @@ def beta(ctext, hashtype):
         ).text
     except requests.exceptions.ReadTimeout as e:
         logging.info(f"Beta failed timeout {e}")
-    match = re.search(r'/generate-hash/?text=.*?"', response)
-    if match:
-        return match.group(1)
+    if match := re.search(r'/generate-hash/?text=.*?"', response):
+        return match[1]
     return None
 
 
 def gamma(ctext, hashtype):
     try:
         response = requests.get(
-            "https://www.nitrxgen.net/md5db/" + ctext, timeout=5
+            f"https://www.nitrxgen.net/md5db/{ctext}", timeout=5
         ).text
+
     except requests.exceptions.ReadTimeout as e:
         logging.info(f"Gamma failed with {e}")
-    if response:
-        return response
-    else:
-        return None
+    return response or None
 
 
 def delta(ctext, hashtype):
@@ -55,16 +52,13 @@ def delta(ctext, hashtype):
 def theta(ctext, hashtype):
     try:
         response = requests.get(
-            "https://md5decrypt.net/Api/api.php?hash=%s&hash_type=%s&email=deanna_abshire@proxymail.eu&code=1152464b80a61728"
-            % (ctext, hashtype),
+            f"https://md5decrypt.net/Api/api.php?hash={ctext}&hash_type={hashtype}&email=deanna_abshire@proxymail.eu&code=1152464b80a61728",
             timeout=5,
         ).text
+
     except requests.exceptions.ReadTimeout as e:
         logging.info(f"Gamma failed with {e}")
-    if len(response) != 0:
-        return response
-    else:
-        return None
+    return response if len(response) != 0 else None
 
 
 md5 = [gamma, alpha, beta, theta, delta]
@@ -82,9 +76,8 @@ def crack(ctext):
 
 
 def threaded(ctext):
-    resp = crack(ctext)
-    if resp:
-        print(ctext + " : " + resp)
+    if resp := crack(ctext):
+        print(f"{ctext} : {resp}")
         result[ctext] = resp
 
 

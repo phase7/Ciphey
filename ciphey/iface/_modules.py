@@ -129,6 +129,9 @@ class Checker(Generic[T], ConfigurableModule):
 
     @classmethod
     def convert(cls, expected: Set[type]):
+
+
+
         class PolyWrapperClass(PolymorphicChecker):
             @staticmethod
             def getParams() -> Optional[Dict[str, ParamSpec]]:
@@ -136,21 +139,16 @@ class Checker(Generic[T], ConfigurableModule):
 
             def check(self, text) -> Optional[str]:
                 """Should return some description (or an empty string) on success, otherwise return None"""
-                if type(text) not in expected:
-                    return None
-                else:
-                    return self._base.check(text)
+                return None if type(text) not in expected else self._base.check(text)
 
             def getExpectedRuntime(self, text) -> float:
-                if type(text) not in expected:
-                    return 0
-                else:
-                    return self._base.getExpectedRuntime(text)
+                return 0 if type(text) not in expected else self._base.getExpectedRuntime(text)
 
             def __init__(self, config: Config):
                 super().__init__(config)
                 # This is easier than inheritance
                 self._base = cls(config)
+
 
         PolyWrapperClass.__name__ = cls.__name__
 
@@ -315,7 +313,7 @@ def pretty_search_results(res: SearchResult, display_intermediate: bool = False)
     # "quadgrams", "brandon", "json checker" is.
     # We print the checker if its regex or another language, so long as it starts with:
     # "The" like "The plaintext is a Uniform Resource Locator (URL)."
-    if len(res.check_res) != 0 and "The" == res.check_res[0:3]:
+    if len(res.check_res) != 0 and res.check_res[:3] == "The":
         ret += f"{res.check_res}\n"
 
     def add_one():
@@ -348,10 +346,7 @@ def pretty_search_results(res: SearchResult, display_intermediate: bool = False)
         out += add_one()
 
     if out:
-        if len(out.split("\n")) > 1:
-            ret += "Formats used:\n"
-        else:
-            ret += "Format used:\n"
+        ret += "Formats used:\n" if len(out.split("\n")) > 1 else "Format used:\n"
         ret += out
 
     # Remove trailing newline

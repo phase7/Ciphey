@@ -27,7 +27,7 @@ class Registry:
 
         target_reg = self._reg.setdefault(module_base, {})
         # Seek to the given type
-        for subtype in module_args[0:-1]:
+        for subtype in module_args[:-1]:
             target_reg = target_reg.setdefault(subtype, {})
         target_reg.setdefault(module_args[-1], []).append(input_type)
 
@@ -35,11 +35,7 @@ class Registry:
         name = input_type.__name__.lower()
         name_target = self._names[name] = (input_type, set())
 
-        if issubclass(input_type, Targeted):
-            target = input_type.getTarget()
-        else:
-            target = None
-
+        target = input_type.getTarget() if issubclass(input_type, Targeted) else None
         if issubclass(input_type, Searcher):
             module_type = module_base = Searcher
             module_args = ()
@@ -48,7 +44,7 @@ class Registry:
             module_base = None
 
             # Work out what module type this is
-            if len(args) == 0 and hasattr(input_type, "__orig_bases__"):
+            if not args and hasattr(input_type, "__orig_bases__"):
                 for i in input_type.__orig_bases__:
                     if module_type is not None:
                         raise TypeError(
@@ -72,7 +68,7 @@ class Registry:
 
             # Replace input type with polymorphic checker if required
             if issubclass(input_type, Checker):
-                if len(args) == 0:
+                if not args:
                     arg = [
                         get_args(i)
                         for i in input_type.__orig_bases__
@@ -88,7 +84,7 @@ class Registry:
                 name_target = self._names[name] = (input_type, {PolymorphicChecker})
 
             # Now handle the difference between register and register_multi
-            if len(args) == 0:
+            if not args:
                 if module_type is PolymorphicChecker:
                     module_base = PolymorphicChecker
                 elif module_base is None:
@@ -144,9 +140,7 @@ class Registry:
         self, target: str, type_constraint: Type = None
     ) -> Optional[Union[Dict[Type, Set[Type]], Set[Type]]]:
         x = self._targets.get(target)
-        if x is None or type_constraint is None:
-            return x
-        return x.get(type_constraint)
+        return x if x is None or type_constraint is None else x.get(type_constraint)
 
     def get_all_names(self) -> List[str]:
         return list(self._names.keys())

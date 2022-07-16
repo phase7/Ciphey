@@ -41,7 +41,7 @@ class test_generator:
         with open("test_main_generated.py", "w") as f:
             f.write("from ciphey.__main__ import main, make_default_config")
             print("Opened fild")
-            for i in track(range(1, self.HOW_MANY_TESTS)):
+            for _ in track(range(1, self.HOW_MANY_TESTS)):
                 print("In the for loop")
                 x = self.enCiphey_obj.getRandomEncryptedSentence()
                 print(x)
@@ -74,7 +74,7 @@ def test_{cipher['Encrypted Texts']['CipherUsed']}_{id}():
 
     def randomString(self, stringLength):
         letters = string.ascii_letters
-        return "".join(random.choice(letters) for i in range(stringLength))
+        return "".join(random.choice(letters) for _ in range(stringLength))
 
 
 t = test_generator()

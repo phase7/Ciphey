@@ -27,10 +27,9 @@ class Quorum(Generic[T], Checker[T]):
                 "k must be between 0 and the number of checkers (inclusive)"
             )
 
-        self.checkers = []
-        for i in self._params()["checker"]:
-            # This enforces type consistency
-            self.checkers.append(_registry.get_named(i, Checker[T]))
+        self.checkers = [
+            _registry.get_named(i, Checker[T]) for i in self._params()["checker"]
+        ]
 
     @staticmethod
     def getParams() -> Optional[Dict[str, ParamSpec]]:

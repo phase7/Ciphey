@@ -32,16 +32,12 @@ class Baconian(Cracker[str]):
         Attempts to decode both variants of the Baconian cipher.
         """
         logging.debug("Attempting Baconian cracker")
-        candidates = []
         result = []
-        ctext_decoded = ""
-        ctext_decoded2 = ""
-
         # Convert to uppercase and replace delimiters and whitespace with nothing
         ctext = re.sub(r"[,;:\-\s]", "", ctext.upper())
 
         # Make sure ctext only contains A and B
-        if bool(re.search(r"[^AB]", ctext)) is True:
+        if bool(re.search(r"[^AB]", ctext)):
             logging.debug("Failed to crack baconian due to non baconian character(s)")
             return None
 
@@ -58,18 +54,17 @@ class Baconian(Cracker[str]):
         ctext_split = ctext.split(" ")
         baconian_keys = self.BACONIAN_DICT.keys()
 
-        # Decode I=J and U=V variant
-        for i in ctext_split:
-            if i in baconian_keys:
-                ctext_decoded += self.BACONIAN_DICT[i]
+        ctext_decoded = "".join(
+            self.BACONIAN_DICT[i] for i in ctext_split if i in baconian_keys
+        )
 
-        # Decode variant that assigns each letter a unique code
-        for i in ctext_split:
-            if "+" + i in baconian_keys:
-                ctext_decoded2 += self.BACONIAN_DICT["+" + i]
+        ctext_decoded2 = "".join(
+            self.BACONIAN_DICT[f"+{i}"]
+            for i in ctext_split
+            if f"+{i}" in baconian_keys
+        )
 
-        candidates.append(ctext_decoded)
-        candidates.append(ctext_decoded2)
+        candidates = [ctext_decoded, ctext_decoded2]
         for candidate in candidates:
             if candidate != "":
                 if candidate == candidates[0]:
